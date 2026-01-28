@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -73,14 +74,17 @@ class CetakKegiatan extends StatelessWidget {
     );
   }
 
-  // PILIH FOLDER
-  final String? directoryPath = await FilePicker.getDirectoryPath();
-  if (directoryPath == null) return;
+  final bytes = buffer.toString();
+  final blob = html.Blob([bytes], 'text/csv');
+  final url = html.Url.createObjectUrlFromBlob(blob);
 
-  // SIMPAN FILE
-  final file = File("$directoryPath/laporan_kegiatan.csv");
-  await file.writeAsString(buffer.toString());
+  html.AnchorElement(href: url)
+    ..setAttribute("download", "laporan_kegiatan.csv")
+    ..click();
+
+  html.Url.revokeObjectUrl(url);
 }
+
 
 
   @override
